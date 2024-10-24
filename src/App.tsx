@@ -53,7 +53,7 @@ function App() {
   }
 
   const filteredItems = listItem.filter((item) =>
-    item.title.toLowerCase().includes(searchTerm)
+    item.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
