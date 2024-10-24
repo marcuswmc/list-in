@@ -98,7 +98,7 @@ function App() {
                       className={`block w-7 h-7 border rounded ${
                         item.isChecked
                           ? "bg-indigo-800 border-indigo-800"
-                          : "bg-transparent border-slate-600"
+                          : "bg-transparent border-indigo-800"
                       }`}
                     ></span>
                     {item.isChecked && (
