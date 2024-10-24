@@ -6,6 +6,7 @@ interface ListItem {
   id: number;
   title: string;
   quantity: number;
+  isChecked: boolean
 }
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
         id: newId,
         title: newItem,
         quantity: newQuantity,
+        isChecked: false,
       },
       ...listItem,
     ]);
@@ -42,6 +44,14 @@ function App() {
     setSearchTerm(event.target.value);
   }
 
+  function toggleItemChecked(id: number) {
+    setListItem(
+      listItem.map((item) =>
+        item.id === id ? { ...item, isChecked: !item.isChecked } : item
+      )
+    );
+  }
+
   const filteredItems = listItem.filter((item) =>
     item.title.toLowerCase().includes(searchTerm)
   );
@@ -49,37 +59,76 @@ function App() {
   return (
     <div className="max-w-4xl mx-auto h-full">
       <div className="p-4">
-        <h1 className="text-indigo-600 text-3xl font-medium py-3">
-          list<span className="text-slate-200 ">In</span>
+        <h1 className="text-indigo-800 text-3xl font-medium py-3">
+          list<span className="text-slate-400 ">In</span>
         </h1>
-        <p className="text-lg text-slate-600">
-          Lista de compra compartilhada
-        </p>
-        <div className="h-[1px] bg-indigo-700 my-8"></div>
-        <div></div>
+        <p className="text-xl text-slate-600">Shared shopping list</p>
+
+        <div className="flex my-8 border-b border-indigo-800">
+          <input
+            type="text"
+            className="flex-grow bg-transparent outline-none p-2 text-lg text-slate-400 placeholder-slate-600 font-medium"
+            placeholder="Search"
+            onChange={handleSearch}
+          />
+        </div>
 
         <div className="flex flex-col gap-2 mt-10">
           {filteredItems.length < 1 ? (
-            <span className="text-slate-800 text-3xl font-medium">Add some products...</span>
+            <span className="text-slate-800 text-3xl font-medium">
+              Add some products...
+            </span>
           ) : (
             filteredItems.map((item) => (
               <div
                 key={item.id}
-                className="flex justify-between border border-indigo-950 rounded items-center py-2 px-4"
+                className={`flex justify-between border border-indigo-950 rounded items-center py-2 px-2 ${
+                  item.isChecked ? "bg-slate-900" : ""
+                }`}
               >
-                <div>
-                  <p className="text-lg text-slate-200">{item.title}</p>
-                  <p className="text-slate-500 text-sm">
-                    Quantity: {item.quantity}
+                <div className=" overflow-hidden flex gap-4 items-center">
+                <label className="relative cursor-pointer">
+                    <input
+                      type="checkbox"
+                      className="absolute opacity-0 h-0 w-0"
+                      checked={item.isChecked}
+                      onChange={() => toggleItemChecked(item.id)}
+                    />
+                    <span
+                      className={`block w-7 h-7 border rounded ${
+                        item.isChecked
+                          ? "bg-indigo-800 border-indigo-800"
+                          : "bg-transparent border-slate-600"
+                      }`}
+                    ></span>
+                    {item.isChecked && (
+                      <span className="absolute inset-0 flex items-center justify-center text-white">
+                        ✓
+                      </span>
+                    )}
+                  </label>
+                  <p className={`text-lg text-ellipsis text-wrap truncate ${
+                      item.isChecked
+                        ? "line-through text-slate-500"
+                        : "text-slate-300"
+                    }`}>
+                    {item.title}
                   </p>
                 </div>
 
-                <div className="flex gap-6">
+                <div className="flex items-center gap-7 pl-2">
+                  <p className={` text-lg ${
+                    item.isChecked
+                    ? "text-slate-500"
+                    : "text-slate-300"
+                    }`}>
+                      {item.quantity}
+                      </p>
                   <button
                     onClick={() => handleDelete(item.id)}
                     className="border border-indigo-950 p-2 rounded"
                   >
-                    <Trash size={20} />
+                    <Trash size={20} color="#64748b" />
                   </button>
                 </div>
               </div>
@@ -88,16 +137,10 @@ function App() {
         </div>
       </div>
 
-      <div className="fixed bottom-10 right-5 left-5 flex items-center gap-4 z-50">
-        <input
-          type="text"
-          className="flex-grow border-2 border-indigo-700 rounded-full bg-black outline-none p-3 text-lg truncate placeholder-slate-700"
-          placeholder="Search"
-          onChange={handleSearch}
-        />
+      <div className="fixed bottom-10 right-5 z-50">
         <button
           onClick={handleOpenModal}
-          className="bg-black flex items-center justify-center border-2 border-indigo-700 p-2 rounded-full"
+          className="bg-black flex items-center justify-center border-2 border-indigo-800 p-2 rounded-full"
         >
           <Plus size={40} color="#64748b" />
         </button>

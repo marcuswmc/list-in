@@ -22,7 +22,7 @@ export function CreateItemModal({
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center">
-      <div className="flex justify-center px-4 min-w-80 max-w-96">
+      <div className="flex justify-center px-4 w-full max-w-96">
         <form
           className="flex flex-col gap-2 w-full bg-slate-900 p-4 rounded"
           onSubmit={handleSubmit}
@@ -49,17 +49,17 @@ export function CreateItemModal({
               <div className="flex items-center gap-2">
                 <button
                   type="button"
-                  className="border px-2 text-3xl"
+                  className="border px-2 text-2xl"
                   onClick={() =>
                     setNewQuantity((prev) => (prev > 1 ? prev - 1 : 1))
                   }
                 >
                   -
                 </button>
-                <span className="text-xl">{newQuantity}</span>
+                <span className="text-2xl">{newQuantity}</span>
                 <button
                   type="button"
-                   className="border px-2 text-3xl"
+                   className="border px-2 text-2xl"
                   onClick={() => setNewQuantity((prev) => prev + 1)}
                 >
                   +
