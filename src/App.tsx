@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CreateItemModal } from "./components/createItemModal";
 import { Plus, Trash } from "lucide-react";
 
@@ -6,17 +6,25 @@ interface ListItem {
   id: number;
   title: string;
   quantity: number;
-  isChecked: boolean
+  isChecked: boolean;
 }
 
 function App() {
-  const [listItem, setListItem] = useState<ListItem[]>([]);
+  const [listItem, setListItem] = useState<ListItem[]>(() => {
+    const storedItems = localStorage.getItem("listinList");
+    return storedItems ? JSON.parse(storedItems) : []
+  });
+
   const [showModal, setShowModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
+  useEffect(() => {
+    localStorage.setItem("listinList", JSON.stringify(listItem));
+  }, [listItem]);
+
   function handleAddItem(newItem: string, newQuantity: number) {
-    const newId = listItem.length + 1;
-    setListItem([
+    const newId = listItem.length + 1
+    const updatedList = [
       {
         id: newId,
         title: newItem,
@@ -24,12 +32,14 @@ function App() {
         isChecked: false,
       },
       ...listItem,
-    ]);
+    ];
+    setListItem(updatedList);
     setShowModal(false);
   }
 
   function handleDelete(id: number) {
-    setListItem(listItem.filter((item) => item.id !== id));
+    const updatedList = listItem.filter((item) => item.id !== id);
+    setListItem(updatedList);
   }
 
   function handleOpenModal() {
@@ -45,11 +55,10 @@ function App() {
   }
 
   function toggleItemChecked(id: number) {
-    setListItem(
-      listItem.map((item) =>
-        item.id === id ? { ...item, isChecked: !item.isChecked } : item
-      )
+    const updatedList = listItem.map((item) =>
+      item.id === id ? { ...item, isChecked: !item.isChecked } : item
     );
+    setListItem(updatedList);
   }
 
   const filteredItems = listItem.filter((item) =>
@@ -87,7 +96,7 @@ function App() {
                 }`}
               >
                 <div className=" overflow-hidden flex gap-4 items-center">
-                <label className="relative cursor-pointer">
+                  <label className="relative cursor-pointer">
                     <input
                       type="checkbox"
                       className="absolute opacity-0 h-0 w-0"
@@ -107,23 +116,25 @@ function App() {
                       </span>
                     )}
                   </label>
-                  <p className={`text-lg text-ellipsis text-wrap truncate ${
+                  <p
+                    className={`text-lg text-ellipsis text-wrap truncate ${
                       item.isChecked
                         ? "line-through text-slate-500"
                         : "text-slate-300"
-                    }`}>
+                    }`}
+                  >
                     {item.title}
                   </p>
                 </div>
 
                 <div className="flex items-center gap-7 pl-2">
-                  <p className={` text-lg ${
-                    item.isChecked
-                    ? "text-slate-500"
-                    : "text-slate-300"
-                    }`}>
-                      {item.quantity}
-                      </p>
+                  <p
+                    className={` text-lg ${
+                      item.isChecked ? "text-slate-500" : "text-slate-300"
+                    }`}
+                  >
+                    {item.quantity}
+                  </p>
                   <button
                     onClick={() => handleDelete(item.id)}
                     className="border border-indigo-950 p-2 rounded"
