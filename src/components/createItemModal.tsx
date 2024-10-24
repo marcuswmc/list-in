@@ -34,7 +34,6 @@ export function CreateItemModal({
           </div>
           <div className="flex flex-col gap-6">
             <div className="flex flex-col gap-2">
-              <label className="text-slate-500 text-lg">Product</label>
               <input
                 name="title"
                 value={newItem}
