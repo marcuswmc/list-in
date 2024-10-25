@@ -1,45 +1,60 @@
+import axios from "axios";
 import { useState, useEffect } from "react";
 import { CreateItemModal } from "./components/createItemModal";
 import { Plus, Trash } from "lucide-react";
 
 interface ListItem {
-  id: number;
+  _id: number;
   title: string;
   quantity: number;
   isChecked: boolean;
 }
 
 function App() {
-  const [listItem, setListItem] = useState<ListItem[]>(() => {
-    const storedItems = localStorage.getItem("listinList");
-    return storedItems ? JSON.parse(storedItems) : []
-  });
+  const [listItem, setListItem] = useState<ListItem[]>([]);
 
   const [showModal, setShowModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    localStorage.setItem("listinList", JSON.stringify(listItem));
-  }, [listItem]);
+    async function fetchItems() {
+      try {
+        const response = await axios.get(
+          "https://listin-server-production.up.railway.app/api/list/items"
+        );
+        setListItem(response.data);
+      } catch (error) {
+        console.error("Error fetching items:", error);
+      }
+    }
+    fetchItems();
+  }, []);
 
-  function handleAddItem(newItem: string, newQuantity: number) {
-    const newId = listItem.length + 1
-    const updatedList = [
-      {
-        id: newId,
-        title: newItem,
-        quantity: newQuantity,
-        isChecked: false,
-      },
-      ...listItem,
-    ];
-    setListItem(updatedList);
-    setShowModal(false);
+  const API_BASE_URL = "https://listin-server-production.up.railway.app/api/list/items";
+
+  async function handleAddItem(newItem: string, newQuantity: number) {
+    try {
+      const response = await axios.post(
+        `${API_BASE_URL}`,
+        {
+          title: newItem,
+          quantity: newQuantity,
+        }
+      );
+      setListItem((prevItem) => [response.data, ...prevItem]);
+      setShowModal(false);
+    } catch (error) {
+      console.error("Error adding item:", error);
+    }
   }
 
-  function handleDelete(id: number) {
-    const updatedList = listItem.filter((item) => item.id !== id);
-    setListItem(updatedList);
+  async function handleDelete(_id: number) {
+    try {
+      await axios.delete(`${API_BASE_URL}/${_id}`);
+      setListItem((prevItem) => prevItem.filter((item) => item._id !== _id));
+    } catch (error) {
+      console.error("Error deleting item:", error);
+    }
   }
 
   function handleOpenModal() {
@@ -54,11 +69,21 @@ function App() {
     setSearchTerm(event.target.value);
   }
 
-  function toggleItemChecked(id: number) {
-    const updatedList = listItem.map((item) =>
-      item.id === id ? { ...item, isChecked: !item.isChecked } : item
-    );
-    setListItem(updatedList);
+  async function toggleItemChecked(_id: number) {
+    const item = listItem.find((item) => item._id === _id);
+    if (!item) return;
+    try {
+      const response = await axios.put(`${API_BASE_URL}/${_id}`, {
+        isChecked: !item.isChecked,
+      });
+      setListItem((prevItems) =>
+        prevItems.map((item) =>
+          item._id === _id ? { ...item, isChecked: response.data.isChecked } : item
+        )
+      );
+    } catch (error) {
+      console.error("Error updating item:", error);
+    }
   }
 
   const filteredItems = listItem.filter((item) =>
@@ -90,7 +115,7 @@ function App() {
           ) : (
             filteredItems.map((item) => (
               <div
-                key={item.id}
+                key={item._id}
                 className={`flex justify-between border border-indigo-950 rounded items-center py-2 px-2 ${
                   item.isChecked ? "bg-slate-900" : ""
                 }`}
@@ -101,7 +126,7 @@ function App() {
                       type="checkbox"
                       className="absolute opacity-0 h-0 w-0"
                       checked={item.isChecked}
-                      onChange={() => toggleItemChecked(item.id)}
+                      onChange={() => toggleItemChecked(item._id)}
                     />
                     <span
                       className={`block w-7 h-7 border rounded ${
@@ -136,7 +161,7 @@ function App() {
                     {item.quantity}
                   </p>
                   <button
-                    onClick={() => handleDelete(item.id)}
+                    onClick={() => handleDelete(item._id)}
                     className="border border-indigo-950 p-2 rounded"
                   >
                     <Trash size={20} color="#64748b" />
