@@ -96,14 +96,14 @@ export function ListRender() {
   return (
     <div className="max-w-4xl mx-auto h-full">
       <div className="p-4">
+        
+        <div className="flex justify-between items-center">
         <h1 className="text-indigo-800 text-3xl font-medium py-3">
           list<span className="text-slate-400 ">In</span>
         </h1>
-        <div className="flex justify-between items-center">
-        <p className="text-xl text-slate-400 font-medium">{listName}</p>
-
         <ListCode code={`${listId}`}/>
         </div>
+        <p className="text-xl text-slate-400 font-medium">{listName}</p>
 
         <div className="flex my-8 border-b border-indigo-800">
           <input
