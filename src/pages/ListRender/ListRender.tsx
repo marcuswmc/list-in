@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import { CreateItemModal } from "../../components/createItemModal";
 import { Plus, Trash } from "lucide-react";
 import { ListCode } from "../../components/ListCode/listCode";
+import { Toaster } from "../../components/ui/toaster";
 
 interface ListItem {
   _id: string;
@@ -24,10 +25,9 @@ export function ListRender() {
       try {
         const listNameResponse = await axios.get(`https://listin-server-production.up.railway.app/api/lists/${listId}`);
         setListName(listNameResponse.data.name);
-
-        const response = await axios.get(
-          `https://listin-server-production.up.railway.app/api/lists/${listId}/items`
-        );
+        console.log(listNameResponse);
+  
+        const response = await axios.get(`https://listin-server-production.up.railway.app/api/lists/${listId}/items`);
         setListItem(response.data);
       } catch (error) {
         console.error("Error fetching items:", error);
@@ -35,6 +35,7 @@ export function ListRender() {
     }
     fetchItems();
   }, [listId]);
+  
 
   const API_BASE_URL = `https://listin-server-production.up.railway.app/api/lists/${listId}/items`;
 
@@ -116,9 +117,11 @@ export function ListRender() {
 
         <div className="flex flex-col gap-2 mt-10">
           {filteredItems.length < 1 ? (
-            <span className="text-slate-800 text-3xl font-medium">
+            <button
+            onClick={handleOpenModal}
+            className="text-slate-800 text-3xl font-medium">
               Add some products...
-            </span>
+            </button>
           ) : (
             filteredItems.map((item) => (
               <div
@@ -188,8 +191,8 @@ export function ListRender() {
           <Plus size={40} color="#64748b" />
         </button>
       </div>
-
       <div className="bg-gradient-to-t from-background h-32 fixed w-full bottom-0"></div>
+          <Toaster/>
 
       {showModal && (
         <CreateItemModal

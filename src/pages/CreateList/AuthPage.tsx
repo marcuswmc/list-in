@@ -30,7 +30,7 @@ export function AuthPage() {
 
   async function handleCreateList() {
     try {
-      const response = await axios.post("https://listin-server-production.up.railway.app/api/lists", {
+      const response = await axios.post("https://listin-server-production.up.railway.app/api/create-list", {
         name: listName,
         creatorEmail: email,
       });
