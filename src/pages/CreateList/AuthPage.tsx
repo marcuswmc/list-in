@@ -50,7 +50,7 @@ export function AuthPage() {
   }
 
   return (
-    <div className="h-screen max-h-screen flex flex-col items-center justify-center px-8">
+    <div className="h-dvh max-h-screen flex flex-col items-center justify-center px-8">
       <div className="w-full mb-6 flex flex-col items-center">
         <h1 className="text-indigo-800 text-5xl font-medium py-3">
           list<span className="text-slate-400 ">In</span>
@@ -120,7 +120,7 @@ export function AuthPage() {
                 <Input
                   id="shared-code"
                   type="text"
-                  placeholder="LI3094398"
+                  placeholder="671fd4a227..."
                   value={shareCode}
                   onChange={(e) => setShareCode(e.target.value)}
                   className="border rounded text-lg"
