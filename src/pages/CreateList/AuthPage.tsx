@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
-import { useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { Button } from "../../components/ui/button";
 import {
@@ -26,14 +26,19 @@ export function AuthPage() {
   const [listName, setListName] = useState("");
   const [email, setEmail] = useState("");
   const [shareCode, setShareCode] = useState("");
+  const [listEmail, setListEmail] = useState("");
+  const [isLoading, setIsLoading] = useState(Boolean);
   const navigate = useNavigate();
 
   async function handleCreateList() {
     try {
-      const response = await axios.post("https://listin-server-production.up.railway.app/api/create-list", {
-        name: listName,
-        creatorEmail: email,
-      });
+      const response = await axios.post(
+        "https://listin-server-production.up.railway.app/api/create-list",
+        {
+          name: listName,
+          creatorEmail: email,
+        }
+      );
       navigate(`/lists/${response.data._id}`);
     } catch (error) {
       console.error("Error creating list:", error);
@@ -42,10 +47,35 @@ export function AuthPage() {
 
   async function handleAccessList() {
     try {
+      setIsLoading(true);
       const codeList = shareCode;
       navigate(`/lists/${codeList}`);
     } catch (error) {
       console.error("Error accessing list:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function handleAccessListWithEmail() {
+    try {
+      setIsLoading(true);
+      const emailList = listEmail;
+      const response = await axios.get(
+        "https://listin-server-production.up.railway.app/api/lists"
+      );
+      const foundlist = await response.data.find(
+        (list: { creatorEmail: string }) => list.creatorEmail === emailList
+      );
+      if (!foundlist) {
+        alert("List not found");
+      } else {
+        navigate(`/lists/${foundlist._id}`);
+      }
+    } catch (error) {
+      console.error("Error acessing list with email", error);
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -63,7 +93,7 @@ export function AuthPage() {
             New list
           </TabsTrigger>
           <TabsTrigger value="list-code" className="rounded-full">
-            I have a list code
+          I already have a list
           </TabsTrigger>
         </TabsList>
         <TabsContent value="new-list">
@@ -80,7 +110,7 @@ export function AuthPage() {
                   <Input
                     id="list-name"
                     type="text"
-                    placeholder="List name"
+                    placeholder="Add a list name"
                     onChange={(e) => setListName(e.target.value)}
                     className="border-b border-indigo-800 bg-transparent font-medium text-slate-300 text-xl"
                   />
@@ -88,19 +118,24 @@ export function AuthPage() {
               </div>
               <div className="space-y-2">
                 <div className="relative">
-                  <Mail size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  <Mail
+                    size={18}
+                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                  />
                   <Input
                     id="email"
                     type="email"
-                    placeholder="m@example.com"
+                    placeholder="email@example.com"
                     onChange={(e) => setEmail(e.target.value)}
-                    className="border rounded pl-10 text-lg" 
+                    className="border rounded pl-10 text-lg"
                   />
                 </div>
               </div>
             </CardContent>
             <CardFooter>
-              <Button onClick={handleCreateList}  className="w-full rounded">Create a new list</Button>
+              <Button onClick={handleCreateList} className="w-full rounded">
+                Create a new list
+              </Button>
             </CardFooter>
           </Card>
         </TabsContent>
@@ -109,11 +144,11 @@ export function AuthPage() {
             <CardHeader>
               <CardTitle className="text-2xl">Enter with a list code</CardTitle>
               <CardDescription className="text-slate-400">
-              If you already have a list code, you can access it directly.
+                If you already have a list code, you can access it directly.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="space-y-2">
+              <div className="space-y-4">
                 <Label htmlFor="shared-code" className="text-gray-300">
                   List code
                 </Label>
@@ -125,10 +160,50 @@ export function AuthPage() {
                   onChange={(e) => setShareCode(e.target.value)}
                   className="border rounded text-lg"
                 />
+
+                <div className="w-full flex items-center justify-center space-x-2">
+                  <span className="h-px w-full bg-slate-600"></span>
+                  <p className="text-slate-400 font-medium whitespace-nowrap">
+                    Or continue with email
+                  </p>
+                  <span className="h-px w-full bg-slate-600"></span>
+                </div>
+                <div className="space-y-2">
+                <div className="relative">
+                  <Mail
+                    size={18}
+                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                  />
+                  <Input
+                    id="list-email"
+                    type="email"
+                    placeholder="email@example.com"
+                    onChange={(e) => setListEmail(e.target.value)}
+                    className="border rounded pl-10 text-lg"
+                  />
+                </div>
+              </div>
               </div>
             </CardContent>
             <CardFooter>
-              <Button onClick={handleAccessList} className="w-full rounded">Continue</Button>
+              {isLoading ? (
+                <div>loading...</div>
+              ) : (
+                <Button
+                  onClick={() => {
+                    if (shareCode) {
+                      handleAccessList();
+                    } else if (listEmail) {
+                      handleAccessListWithEmail();
+                    } else {
+                      alert("Please provide either a list code or an email");
+                    }
+                  }}
+                  className="w-full rounded"
+                >
+                  Continue
+                </Button>
+              )}
             </CardFooter>
           </Card>
         </TabsContent>
