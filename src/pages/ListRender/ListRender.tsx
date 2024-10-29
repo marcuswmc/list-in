@@ -2,8 +2,8 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { CreateItemModal } from "../../components/createItemModal";
-import { Plus, Trash } from "lucide-react";
-import { ListCode } from "../../components/ListCode/listCode";
+import { Trash } from "lucide-react";
+import { ListShare } from "../../components/ListCode/listCode";
 import { Toaster } from "../../components/ui/toaster";
 
 interface ListItem {
@@ -17,7 +17,6 @@ export function ListRender() {
   const { listId } = useParams();
   const [listName, setListName] = useState("")
   const [listItem, setListItem] = useState<ListItem[]>([]);
-  const [showModal, setShowModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
@@ -46,18 +45,9 @@ export function ListRender() {
         quantity: newQuantity,
       });
       setListItem((prevItem) => [response.data, ...prevItem]);
-      setShowModal(false);
     } catch (error) {
       console.error("Error adding item:", error);
     }
-  }
-
-  function handleOpenModal() {
-    setShowModal(true);
-  }
-
-  function handleCloseModal() {
-    setShowModal(false);
   }
 
   function handleSearch(event: React.ChangeEvent<HTMLInputElement>) {
@@ -93,6 +83,8 @@ export function ListRender() {
   const filteredItems = listItem.filter((item) =>
     item.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
+  
+  const shareableLink = `${window.location.origin}/lists/${listId}`;
 
   return (
     <div className="max-w-4xl mx-auto h-full">
@@ -102,7 +94,7 @@ export function ListRender() {
         <h1 className="text-indigo-800 text-3xl font-medium py-3">
           list<span className="text-slate-400 ">In</span>
         </h1>
-        <ListCode code={`${listId}`}/>
+        <ListShare code={`${listId}`} link={shareableLink}/>
         </div>
         <p className="text-xl text-slate-400 font-medium">{listName}</p>
 
@@ -118,7 +110,6 @@ export function ListRender() {
         <div className="flex flex-col gap-2 mt-10">
           {filteredItems.length < 1 ? (
             <button
-            onClick={handleOpenModal}
             className="text-slate-800 text-3xl font-medium">
               Add some products...
             </button>
@@ -182,24 +173,11 @@ export function ListRender() {
           )}
         </div>
       </div>
-
-      <div className="fixed bottom-10 right-5 z-50">
-        <button
-          onClick={handleOpenModal}
-          className="bg-black flex items-center justify-center border-2 border-indigo-800 p-2 rounded-full"
-        >
-          <Plus size={40} color="#64748b" />
-        </button>
-      </div>
       <div className="bg-gradient-to-t from-background h-32 fixed w-full bottom-0"></div>
           <Toaster/>
-
-      {showModal && (
         <CreateItemModal
           handleAddItem={handleAddItem}
-          handleCloseModal={handleCloseModal}
         />
-      )}
     </div>
   );
 }

@@ -1,17 +1,27 @@
-import { CircleX } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useState } from "react";
+import { Toaster } from "./ui/toaster";
+import { useToast } from "../hooks/use-toast";
+
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogTrigger,
+} from "../components/ui/dialog"
+
 
 interface CreateItemModalProps {
   handleAddItem: (newItem: string, newQuantity: number) => void;
-  handleCloseModal: () => void;
 }
 
 export function CreateItemModal({
   handleAddItem,
-  handleCloseModal,
 }: CreateItemModalProps) {
   const [newItem, setNewItem] = useState("");
   const [newQuantity, setNewQuantity] = useState(1);
+
+  const { toast } = useToast();
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -21,17 +31,17 @@ export function CreateItemModal({
   }
 
   return (
-    <div className="fixed inset-0 bg-black/60 flex items-center justify-center">
-      <div className="flex justify-center px-4 w-full max-w-96">
+    <Dialog>
+      <div className="fixed bottom-10 right-5 z-50">        
+      <DialogTrigger asChild className="bg-black flex items-center justify-center border-2 border-indigo-800 p-2 rounded-full cursor-pointer">
+      <Plus size={60} color="#64748b" />
+      </DialogTrigger>
+      </div>
+      <DialogContent className="bg-slate-950 w-full max-w-80 rounded border border-indigo-800">
         <form
-          className="flex flex-col gap-2 w-full bg-slate-900 p-4 rounded"
+          className="flex flex-col gap-2 w-full"
           onSubmit={handleSubmit}
         >
-          <div className="flex justify-end">
-            <button type="button" onClick={handleCloseModal}>
-              <CircleX size={22} color="#64748b"/>
-            </button>
-          </div>
           <div className="flex flex-col gap-6">
             <div className="flex flex-col gap-2">
               <input
@@ -66,12 +76,24 @@ export function CreateItemModal({
               </div>
             </div>
           </div>
-
-          <button className="bg-slate-800 border rounded-full py-2 px-4 text-lg mt-4">
+          <button 
+          className="bg-slate-800 border rounded-full py-2 px-4 text-lg mt-4"
+          onClick={() => {
+            toast({
+              title: "Item added!",
+              description: "Continue adding items to the list.",
+            })
+          }}
+          >
             Add
           </button>
+          <DialogClose className="">
+            Cancel
+          </DialogClose>
+
         </form>
-      </div>
-    </div>
+    </DialogContent>
+    <Toaster/>
+    </Dialog>
   );
 }
