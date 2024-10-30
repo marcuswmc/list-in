@@ -1,10 +1,11 @@
 # ListIn - Shopping List App
 
-This project is a simple shopping list app built with **React** and **TypeScript**, where users can add, delete, search, and mark items as purchased. It also includes a modal to add new items, search functionality to filter through the list, and the ability to check off items as bought.
+This project is a simple shopping list app built with **React** and **TypeScript**, where users can add, delete, search, mark items as purchased, and share. It also includes a modal to add new items, search functionality to filter through the list, and the ability to check off items as bought.
 
 ## Features
 
 - **Add items**: Users can add new products to the list with a quantity.
+- **Share list**: Users can share they list.
 - **Delete items**: Remove items from the list.
 - **Search items**: Search through the list of items using the search bar.
 - **Mark items as purchased**: Check off items to indicate that they have been bought.
@@ -15,6 +16,7 @@ This project is a simple shopping list app built with **React** and **TypeScript
 ![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![Shadcn/ui](https://img.shields.io/badge/shadcnui-06B6D4?style=for-the-badge&logo=shadcnui&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwind-css&logoColor=white)
 
 ## Status
