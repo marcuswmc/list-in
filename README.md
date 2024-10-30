@@ -24,8 +24,11 @@ This project is a simple shopping list app built with **React** and **TypeScript
 ## Project Link [![Access the ListIn Project](https://img.shields.io/badge/Access_the_ListIn_Project-B9FBC0?style=for-the-badge&logo=github&logoColor=white)](https://list-in.vercel.app/)
 
 ## Project Images
-![](/public/list-in_3.png)
 ![](/public/list-in_1.png)
+![](/public/list-in_2.png)
+![](/public/list-in_3.png)
+![](/public/list-in_4.png)
+![](/public/list-in_5.png)
 
 ## How to Run the Project
 
